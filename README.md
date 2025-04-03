@@ -38,3 +38,23 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+## Screenshots
+
+Here are some screenshots of the Scriptorium application
+
+### Home Page
+![Home Page](images/image2.jpg)
+
+### Code Templates
+![Code Templates](images/image1.jpg)
+
+
+### Comments Section
+![Comments Section](images/image3.jpg)
+
+### Code Editor
+![Code Editor](images/image4.jpg)
+
+### Reported Content
+![Reported Content](images/image5.jpg)
