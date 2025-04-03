@@ -44,17 +44,17 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 Here are some screenshots of the Scriptorium application
 
 ### Home Page
-![Home Page](images/image2.jpg)
+![Home Page](image/image2.jpg)
 
 ### Code Templates
-![Code Templates](images/image1.jpg)
+![Code Templates](image/image1.jpg)
 
 
 ### Comments Section
-![Comments Section](images/image3.jpg)
+![Comments Section](image/image3.jpg)
 
 ### Code Editor
-![Code Editor](images/image4.jpg)
+![Code Editor](image/image4.jpg)
 
 ### Reported Content
-![Reported Content](images/image5.jpg)
+![Reported Content](image/image5.jpg)
