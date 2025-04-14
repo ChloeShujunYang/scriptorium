@@ -1,4 +1,18 @@
+# Scriptorium
+
+![Home Page](/home-page.png)
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+
+## Project Screenshots
+
+![Screenshot 1](/3731744665734_.pic.jpg)
+![Screenshot 2](/3741744665748_.pic.jpg)
+![Screenshot 3](/3751744665761_.pic.jpg)
+![Screenshot 4](/3761744665776_.pic.jpg)
+![Screenshot 5](/3771744665790_.pic.jpg)
+![Screenshot 6](/3781744665800_.pic.jpg)
+![Screenshot 7](/3801744666012_.pic.jpg)
 
 ## Getting Started
 
