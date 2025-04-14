@@ -142,7 +142,7 @@ export default function PostView() {
       setPost(data);
 
     } catch (err) {
-      setError('Failed to fetch post ');
+      setError('Failed to fetch post: ' + (err instanceof Error ? err.message : 'Unknown error'));
     } finally {
       setLoading(false);
     }

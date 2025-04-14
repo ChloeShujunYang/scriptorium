@@ -45,12 +45,16 @@ export default function CommentSection({ postId, authorId, comments, onCommentAd
   const [reportedContentId, setReportedContentId] = useState<number | null>(null);
   const [expandedComments, setExpandedComments] = useState<Set<number>>(new Set());
 
+  // Add debug logging for props
+  console.debug('CommentSection props:', { postId, authorId, commentsCount: comments.length, currentUser });
+
   const handleSubmitComment = async () => {
     if (!user) {
-      console.error('User is not logged in');
+      console.error('Comment submission failed: User not logged in');
       return;
     }
     try {
+      console.debug('Submitting comment:', { content: newComment, postId, parentId: replyTo });
       const response = await fetch('/api/posts/comment', {
         method: 'POST',
         headers: {
@@ -64,11 +68,16 @@ export default function CommentSection({ postId, authorId, comments, onCommentAd
         }),
       });
 
-      if (response.ok) {
-        setNewComment('');
-        setReplyTo(null);
-        onCommentAdded();
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Comment submission failed:', { status: response.status, error: errorData });
+        throw new Error(`Failed to submit comment: ${response.status}`);
       }
+
+      console.debug('Comment submitted successfully');
+      setNewComment('');
+      setReplyTo(null);
+      onCommentAdded();
     } catch (error) {
       console.error('Failed to submit comment:', error);
     }
@@ -76,7 +85,8 @@ export default function CommentSection({ postId, authorId, comments, onCommentAd
 
   const handleVote = async (commentId: number, isUpvote: boolean) => {
     try {
-      await fetch('/api/posts/rate', {
+      console.debug('Submitting vote:', { commentId, isUpvote });
+      const response = await fetch('/api/posts/rate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -88,6 +98,14 @@ export default function CommentSection({ postId, authorId, comments, onCommentAd
           isUpvote
         }),
       });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Vote submission failed:', { status: response.status, error: errorData });
+        throw new Error(`Failed to submit vote: ${response.status}`);
+      }
+
+      console.debug('Vote submitted successfully');
       onCommentAdded();
     } catch (error) {
       console.error('Failed to vote:', error);
@@ -155,6 +173,14 @@ export default function CommentSection({ postId, authorId, comments, onCommentAd
     mainComments = sortComments(mainComments);
     replies = sortComments(replies);
 
+    // Add debug logging for sorting
+    console.debug('Sorting stats:', {
+      totalComments: comments.length,
+      mainComments: mainComments.length,
+      replies: replies.length,
+      sortBy,
+      expandedComments: Array.from(expandedComments)
+    });
 
   return (
     <Box sx={{ mt: 4, borderTop: 1,

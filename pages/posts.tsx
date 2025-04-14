@@ -139,7 +139,83 @@ export default function Posts() {
     }
     
     setLoading(true);
-    updateUrlParams(searchQuery, sortBy, page);
+    setError('');
+    console.log('Searching with params:', {
+      query: searchQuery,
+      sortBy,
+      page
+    });
+
+    try {
+      const params = new URLSearchParams({
+        query: searchQuery,
+        sortByTitle: (sortBy === 'title').toString(),
+        sortByTags: (sortBy === 'tags').toString(),
+        sortByContent: (sortBy === 'content').toString(),
+        sortByTemplates: (sortBy === 'templates').toString(),
+        page: page.toString(),
+        limit: '9'
+      });
+
+      const response = await fetch(`/api/posts/search?${params}`);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to search posts');
+      }
+
+      if (data.error) {
+        setError(data.error);
+        return;
+      }
+
+      // 确保 posts 数组存在
+      if (!data.posts || !Array.isArray(data.posts)) {
+        setError('Invalid posts data received');
+        return;
+      }
+
+      // 处理每个帖子的数据
+      data.posts = data.posts.map((post: any) => {
+        // 确保 votes 和 comments 数组存在
+        const votes = post.votes || [];
+        const comments = post.comments || [];
+        
+        return {
+          ...post,
+          upvotes: votes.filter((vote: any) => vote.isUpvote).length,
+          downvotes: votes.filter((vote: any) => !vote.isUpvote).length,
+          commentCount: comments.length
+        };
+      });
+
+      // 排序帖子
+      if (data.posts.length > 0) {
+        data.posts.sort((a: any, b: any) => {
+          const ratingA = a.upvotes - a.downvotes;
+          const ratingB = b.upvotes - b.downvotes;
+          if (ratingB === ratingA) {
+            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+          }
+          return ratingB - ratingA;
+        });
+      }
+
+      console.log('Search results:', {
+        posts: data.posts,
+        total: data.total,
+        totalPages: data.totalPages
+      });
+
+      setPosts(data.posts);
+      setTotalPages(data.totalPages || 1);
+      setError('');
+    } catch (err) {
+      console.error('Search error:', err);
+      setError(err instanceof Error ? err.message : 'Failed to search posts');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {

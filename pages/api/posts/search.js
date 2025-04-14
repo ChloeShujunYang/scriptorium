@@ -8,6 +8,7 @@ export default async function handler(req, res) {
     }
 
     try {
+        console.log('Search request query:', req.query);
 
         // get search query, sort options, and pagination parameters from request
         const { query, sortByTitle, sortByTags, sortByContent, sortByTemplates, page = 1, limit = 10 } = req.query;
@@ -23,12 +24,25 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: "Invalid page number" });
         }
 
+        // validate limit
+        if (limit < 1 || limit > 100) {
+            return res.status(400).json({ error: "Limit must be between 1 and 100" });
+        }
+
+        // validate sort criteria
+        if (!sortByTitle && !sortByTags && !sortByContent && !sortByTemplates) {
+            return res.status(400).json({ error: "At least one sort criteria must be specified" });
+        }
+
         let posts = [];
         let total = 0;
+        let searchCriteria = '';
 
         // determine sort criteria
-        if (sortByTitle.toLowerCase() === 'true') {
-
+        if (sortByTitle?.toLowerCase() === 'true') {
+            searchCriteria = 'title';
+            console.log('Searching by title:', query.toLowerCase());
+            
             // return posts with title containing query
             posts = await prisma.post.findMany({
                 where: { 
@@ -55,7 +69,20 @@ export default async function handler(req, res) {
                             name: true,
                         },
                     },
-                    comments: true,
+                    votes: {
+                        select: {
+                            id: true,
+                            isUpvote: true,
+                            voterId: true
+                        }
+                    },
+                    comments: {
+                        select: {
+                            id: true,
+                            content: true,
+                            createdAt: true
+                        }
+                    },
                     createdAt: true
                 },
             });
@@ -68,10 +95,11 @@ export default async function handler(req, res) {
                     isHidden: false
                 },
             });
-            
         } 
-        else if (sortByTags.toLowerCase() === 'true') {
-
+        else if (sortByTags?.toLowerCase() === 'true') {
+            searchCriteria = 'tags';
+            console.log('Searching by tags:', query.toLowerCase());
+            
             // return posts with tags containing query
             posts = await prisma.post.findMany({
                 where: { 
@@ -102,7 +130,20 @@ export default async function handler(req, res) {
                             name: true,
                         },
                     },
-                    comments: true,
+                    votes: {
+                        select: {
+                            id: true,
+                            isUpvote: true,
+                            voterId: true
+                        }
+                    },
+                    comments: {
+                        select: {
+                            id: true,
+                            content: true,
+                            createdAt: true
+                        }
+                    },
                     createdAt: true
                 },
             });
@@ -119,10 +160,11 @@ export default async function handler(req, res) {
                     isHidden: false
                 },
             });
-            
         } 
-        else if (sortByContent.toLowerCase() === 'true') {
-
+        else if (sortByContent?.toLowerCase() === 'true') {
+            searchCriteria = 'content';
+            console.log('Searching by content:', query.toLowerCase());
+            
             // return posts with content containing query
             posts = await prisma.post.findMany({
                 where: { 
@@ -149,7 +191,20 @@ export default async function handler(req, res) {
                             name: true,
                         },
                     },
-                    comments: true,
+                    votes: {
+                        select: {
+                            id: true,
+                            isUpvote: true,
+                            voterId: true
+                        }
+                    },
+                    comments: {
+                        select: {
+                            id: true,
+                            content: true,
+                            createdAt: true
+                        }
+                    },
                     createdAt: true
                 },
             });
@@ -162,10 +217,11 @@ export default async function handler(req, res) {
                     isHidden: false
                 },
             });
-            
         } 
-        else if (sortByTemplates.toLowerCase() === 'true') {
-
+        else if (sortByTemplates?.toLowerCase() === 'true') {
+            searchCriteria = 'templates';
+            console.log('Searching by templates:', query.toLowerCase());
+            
             // return posts with templates containing query
             posts = await prisma.post.findMany({
                 where: { 
@@ -196,7 +252,20 @@ export default async function handler(req, res) {
                             name: true,
                         },
                     },
-                    comments: true,
+                    votes: {
+                        select: {
+                            id: true,
+                            isUpvote: true,
+                            voterId: true
+                        }
+                    },
+                    comments: {
+                        select: {
+                            id: true,
+                            content: true,
+                            createdAt: true
+                        }
+                    },
                     createdAt: true
                 },
             });
@@ -213,13 +282,17 @@ export default async function handler(req, res) {
                     isHidden: false
                 },
             });
-            
         } 
         else {
-            
             return res.status(400).json({ error: "Invalid sort criteria" });
-       
         }
+
+        console.log(`Search results for ${searchCriteria}:`, {
+            query: query.toLowerCase(),
+            foundPosts: posts.length,
+            total,
+            totalPages: Math.ceil(total / parseInt(limit))
+        });
 
         // return found posts
         return res.status(200).json({ 
@@ -228,11 +301,13 @@ export default async function handler(req, res) {
             totalPages: Math.ceil(total / parseInt(limit))
         });
 
-    }
-    catch (error) {
-
-        return res.status(500).json({ error: "An unexpected error occurred while searching for posts" });
-
+    } catch (error) {
+        console.error('Search error:', error);
+        return res.status(500).json({ 
+            error: "An unexpected error occurred while searching for posts",
+            details: error instanceof Error ? error.message : 'Unknown error',
+            stack: error instanceof Error ? error.stack : undefined
+        });
     }
 
 }
