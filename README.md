@@ -6,13 +6,13 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Project Screenshots
 
-![Code Editor Page](/3741744665748_.pic.jpg)
-![Code Templates Page](/3731744665734_.pic.jpg)
-![Blog Posts Page](/3751744665761_.pic.jpg)
-![Blog Post Detail Page](/3761744665776_.pic.jpg)
-![Blog Post Comments](/3771744665790_.pic.jpg)
-![Admin Reported Content](/3781744665800_.pic.jpg)
-![User Profile Settings](/3801744666012_.pic.jpg)
+![Code Editor Page](/code-editor.jpg)
+![Code Templates Page](/code-templates.jpg)
+![Blog Posts Page](/blog-posts.jpg)
+![Blog Post Detail Page](/blog-post-detail.jpg)
+![Blog Post Comments](/blog-post-comments.jpg)
+![Admin Reported Content](/admin-reported-content.jpg)
+![User Profile Settings](/user-profile.jpg)
 
 ## Getting Started
 
